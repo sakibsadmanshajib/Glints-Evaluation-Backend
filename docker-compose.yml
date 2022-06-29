@@ -1,0 +1,65 @@
+version: "3.9"
+
+services:
+  glintsdb:
+    image: postgres:14.1
+    container_name: "glintsdb"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=glintseval
+    networks:
+      - backend
+    tty: true
+    ports:
+      - "5432:5432"
+    volumes:
+      - ~/glintseval_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  glintsbackend:
+    build: 
+      context: .
+      dockerfile: DockerFile
+    container_name: "glintsevalbackend"
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    tty: true
+    ports:
+      - "8000:8000"
+    depends_on:
+      - glintsdb
+    networks:
+      - backend
+    volumes:
+      - .:/home/python
+    working_dir: /home/python
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    restart: always
+  
+  glintsbackend_once:
+    image: glints_glintsbackend
+    container_name: "glintsevalbackend_once"
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    tty: true
+    # ports:
+    #   - "8000:8000"
+    depends_on:
+      - glintsdb
+    networks:
+      - backend
+    volumes:
+      - .:/home/python
+    working_dir: /home/python
+    # command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    # restart: always
+
+networks:
+  backend:
+    name: nw_backend
+    driver: bridge

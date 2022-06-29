@@ -1,0 +1,11 @@
+FROM python:3.9.7-slim
+
+LABEL maintainer="Sakib Sadman Shajib <sakibsadmanshajib@gmail.com>"
+
+COPY . /home/python/
+WORKDIR /home/python
+
+RUN set -eux && \
+    apt-get update && \
+    apt-get install -y python3-pip && \
+    pip3 install -r requirements.txt
