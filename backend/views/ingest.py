@@ -48,7 +48,7 @@ class AddCustomerData(generics.CreateAPIView):
                 restaurantName = transaction['restaurantName']
                 transactionAmount = transaction['transactionAmount']
                 transactionDate = datetime.strptime(transaction['transactionDate'], "%m/%d/%Y %I:%M %p")
-                transaction_data = Transaction(customer=customer_data, dishName=dishName, restaurantName=restaurantName,
+                transaction_data = Transaction(customer=customer_data, dishName=Menu.objects.filter(dishName=dishName, price=transactionAmount).first(), restaurantName=Restaurant.objects.get(restaurantName=restaurantName),
                                             transactionAmount=transactionAmount, transactionDate=transactionDate)
                 transaction_data.save()
 

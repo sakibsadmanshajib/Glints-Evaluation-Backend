@@ -53,6 +53,9 @@ class OpenRestaurants(generics.ListAPIView):
             if start <= time.time() <= end:
                 return True
         return False
+
+    # TODO: Will need to use Regex to match the time format. 
+    # Current one not working well.
         
     def get_queryset(self):
         time = self.request.query_params.get('time', None)

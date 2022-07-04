@@ -23,7 +23,7 @@ class Customer(models.Model):
 
 class Transaction(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
-    dishName = models.CharField(max_length=512)
-    restaurantName = models.CharField(max_length=256)
+    dishName = models.ForeignKey(Menu, on_delete=models.CASCADE)
+    restaurantName = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     transactionAmount = models.DecimalField(max_digits=10, decimal_places=2)
     transactionDate = models.DateTimeField(auto_now_add=True)
