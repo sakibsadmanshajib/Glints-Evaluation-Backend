@@ -2,7 +2,9 @@ version: "3.9"
 
 services:
   glintsdb:
-    image: postgres:14.1
+    build:
+      context: .
+      dockerfile: pg-Dockerfile
     container_name: "glintsdb"
     environment:
       - POSTGRES_USER=postgres
@@ -24,7 +26,7 @@ services:
   glintsbackend:
     build: 
       context: .
-      dockerfile: DockerFile
+      dockerfile: py-DockerFile
     container_name: "glintsevalbackend"
     environment:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -40,24 +42,6 @@ services:
     working_dir: /home/python
     command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
     restart: always
-  
-  glintsbackend_once:
-    image: glints_glintsbackend
-    container_name: "glintsevalbackend_once"
-    environment:
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    tty: true
-    # ports:
-    #   - "8000:8000"
-    depends_on:
-      - glintsdb
-    networks:
-      - backend
-    volumes:
-      - .:/home/python
-    working_dir: /home/python
-    # command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
-    # restart: always
 
 networks:
   backend:
